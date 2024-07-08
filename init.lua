@@ -573,7 +573,7 @@ require('lazy').setup({
         -- gopls = {},
         -- pyright = {},
         bashls = {
-          filetypes = { 'sh', 'zsh' },
+          filetypes = { 'bash', 'sh', 'zsh' },
         },
         jsonls = {},
         rust_analyzer = {},
@@ -919,6 +919,18 @@ require('lazy').setup({
     },
   },
 })
+
+vim.filetype.add {
+  extension = {
+    bash = 'sh',
+    zsh = 'sh',
+    sh = 'sh',
+  },
+  filename = {
+    ['.zshrc'] = 'sh',
+    ['.zshenv'] = 'sh',
+  },
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
