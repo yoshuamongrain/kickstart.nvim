@@ -405,6 +405,35 @@ require('lazy').setup({
         }
       end, { desc = '[S]earch [/] in Open Files' })
 
+      -- Shortcut for searching project (if no project identical to sg)
+      vim.keymap.set('n', '<leader>sp', function()
+        local root = string.gsub(vim.fn.system 'git rev-parse --show-toplevel', '\n', '')
+        if vim.v.shell_error == 0 then
+          builtin.live_grep {
+            cwd = root,
+            prompt_title = 'Live Grep in Project Files',
+          }
+        else
+          builtin.live_grep { prompt_title = 'No Project Files found; fall back to standard live_grep behaviour' }
+        end
+      end, { desc = '[S]earch [P]roject' })
+
+      -- Shortcut for searching project one hit per file (if no project identical to sg)
+      vim.keymap.set('n', '<leader>sP', function()
+        local root = string.gsub(vim.fn.system 'git rev-parse --show-toplevel', '\n', '')
+        if vim.v.shell_error == 0 then
+          builtin.live_grep {
+            cwd = root,
+            prompt_title = 'Live Grep in Project Files',
+            additional_args = function()
+              return { '--max-count=1' }
+            end,
+          }
+        else
+          builtin.live_grep { prompt_title = 'No Project Files found; fall back to standard live_grep behaviour' }
+        end
+      end, { desc = '[S]earch [P]roject max 1' })
+
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
