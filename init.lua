@@ -820,6 +820,16 @@ require('lazy').setup({
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     -- 'folke/tokyonight.nvim',
     'EdenEast/nightfox.nvim',
+    config = function()
+      require('nightfox').setup {
+        palettes = {
+          all = {
+            sel0 = '#472F52',
+          },
+        },
+      }
+    end,
+
     -- 'ribru17/bamboo.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
