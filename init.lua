@@ -357,6 +357,9 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
+        defaults = {
+          path_display = { 'tail' },
+        },
         -- defaults = {
         --   mappings = {
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
@@ -404,6 +407,35 @@ require('lazy').setup({
           prompt_title = 'Live Grep in Open Files',
         }
       end, { desc = '[S]earch [/] in Open Files' })
+
+      -- Shortcut for searching project (if no project identical to sg)
+      vim.keymap.set('n', '<leader>sp', function()
+        local root = string.gsub(vim.fn.system 'git rev-parse --show-toplevel', '\n', '')
+        if vim.v.shell_error == 0 then
+          builtin.live_grep {
+            cwd = root,
+            prompt_title = 'Live Grep in Project Files',
+          }
+        else
+          builtin.live_grep { prompt_title = 'No Project Files found; fall back to standard live_grep behaviour' }
+        end
+      end, { desc = '[S]earch [P]roject' })
+
+      -- Shortcut for searching project one hit per file (if no project identical to sg)
+      vim.keymap.set('n', '<leader>sP', function()
+        local root = string.gsub(vim.fn.system 'git rev-parse --show-toplevel', '\n', '')
+        if vim.v.shell_error == 0 then
+          builtin.live_grep {
+            cwd = root,
+            prompt_title = 'Live Grep in Project Files',
+            additional_args = function()
+              return { '--max-count=1' }
+            end,
+          }
+        else
+          builtin.live_grep { prompt_title = 'No Project Files found; fall back to standard live_grep behaviour' }
+        end
+      end, { desc = '[S]earch [P]roject max 1' })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
@@ -788,6 +820,16 @@ require('lazy').setup({
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     -- 'folke/tokyonight.nvim',
     'EdenEast/nightfox.nvim',
+    config = function()
+      require('nightfox').setup {
+        palettes = {
+          all = {
+            sel0 = '#472F52',
+          },
+        },
+      }
+    end,
+
     -- 'ribru17/bamboo.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
@@ -897,7 +939,7 @@ require('lazy').setup({
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
